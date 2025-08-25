@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catbox Clone - Uploader</title>
+  <style>
+    body { font-family: Arial, sans-serif; background:#111; color:#fff;
+           display:flex; align-items:center; justify-content:center; height:100vh; margin:0;}
+    .card { background:#1e1e1e; padding:20px; border-radius:12px;
+            box-shadow:0 0 10px rgba(0,0,0,0.5); text-align:center; width:350px;}
+    input[type="file"] { margin:15px 0; color:#fff;}
+    button { padding:10px 20px; border:none; border-radius:8px; background:#007bff; color:white; cursor:pointer;}
+    button:hover { background:#0056b3;}
+    #result { margin-top:15px; word-break:break-all;}
+    a { color:#4da6ff;}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>📦 Upload File</h2>
+    <input type="file" id="fileInput" />
+    <br/>
+    <button onclick="uploadFile()">Upload</button>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function uploadFile() {
+      const input = document.getElementById("fileInput");
+      if (!input.files.length) {
+        alert("Pilih file dulu!");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", input.files[0]);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await res.json();
+      const result = document.getElementById("result");
+
+      if (data.filename) {
+        result.innerHTML = `✅ Uploaded:<br>Nama file: ${data.filename}<br><small>(disimpan sementara di server Vercel)</small>`;
+      } else {
+        console.error(data);
+        result.innerHTML = "❌ Upload gagal.";
+      }
+    }
+  </script>
+</body>
+</html>
